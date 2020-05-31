@@ -48,5 +48,5 @@ You just run `rtl2mqtt.py` from this repo for now.
 
 TODO / Coming Soon: directions to run it as a service!
 
-[RTL433-to-mqtt]: https://github.com/mverleun/RTL433-to-mqtt
+[mverleun/RTL433-to-mqtt]: https://github.com/mverleun/RTL433-to-mqtt
 [rtl_433]: https://github.com/merbanan/rtl_433
