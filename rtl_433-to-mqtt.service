@@ -1,0 +1,14 @@
+[Unit]
+Description=rtl_433 to MQTT gateway
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=your_username
+ExecStart=/usr/bin/python3 /home/your_username/rtl_433-to-mqtt-for-hass/rtl2mqtt.py
+Environment=PYTHONUNBUFFERED=1
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

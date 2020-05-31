@@ -33,7 +33,7 @@ UPDATE_EXPIRATION=60 # seconds
 rtl_433_cmd = "/usr/local/bin/rtl_433 -F json"
 ```
 
-# Installation
+# Prerequisites
 
 ## [rtl_433]
 
@@ -42,11 +42,43 @@ Some Linux distributions have this available as a package (usually `rtl-433`), b
 
 If it is not installed to the default location (`/usr/local/bin/rtl_433`), be sure to update `config.py` with the correct path.
 
-## rtl_433 to MQTT gateway for Home Assistant
+## pip & paho-mqtt
 
-You just run `rtl2mqtt.py` from this repo for now.
+Use `pip` to install `paho-mqtt` for the current user.
+(If you are going to run the service as a different user, install `paho-mqtt` for that user instead.)
 
-TODO / Coming Soon: directions to run it as a service!
+```bash
+sudo apt install python3-pip
+pip3 install paho-mqtt
+```
+
+# Installation
+
+The script will be configured to run as a service, so the machine can be rebooted without requiring any interaction to get the gateway working again.
+
+It can run as a different user, but it is easier to just use your normal user account.
+(Pull requests welcome to add instructions for running the service as a different user.)
+
+First, edit the `rtl_433-to-mqtt.service` file.
+* Update `User=your_username` with the correct username.
+* Update `ExecStart=/usr/bin/python3 /home/your_username/rtl_433-to-mqtt-for-hass/rtl2mqtt.py` with the correct path to this repository
+
+Now, add the service:
+
+```bash
+sudo cp rtl_433-to-mqtt.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable rtl_433-to-mqtt.service
+sudo service rtl_433-to-mqtt start
+```
+
+# Configuration changes
+
+If any changes are made to `config.py`, the service will need restarted to apply them.
+
+```bash
+sudo service rtl_433-to-mqtt restart
+```
 
 [mverleun/RTL433-to-mqtt]: https://github.com/mverleun/RTL433-to-mqtt
 [rtl_433]: https://github.com/merbanan/rtl_433
