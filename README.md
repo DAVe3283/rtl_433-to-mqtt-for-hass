@@ -34,13 +34,46 @@ UPDATE_EXPIRATION=60 # seconds
 rtl_433_cmd = "/usr/local/bin/rtl_433 -F json"
 ```
 
+## MQTT with TLS
+
+It is recommended to use MQTT over TLS where possible, especially over the public Internet. To secure the connection, the server's certificate needs to be verified by the client.
+
+* If your MQTT server has a commercial certificate from a recognized Certificate Authority (CA), no special client configuration is necessary!
+* If your server uses a self-signed certificate, you will need a copy of the server's public cert, and update `MQTT_ROOT_CA` in `config.py` with the path to the public cert.
+* If you have an internal CA, you can set `MQTT_ROOT_CA`, but the recommended method is to add the root CA to the operating system's CA store.
+
+### Add a root CA to the OS CA store
+
+For example, in Debian 10 (stretch):
+
+```bash
+# Create directory for your domain
+sudo mkdir /usr/local/share/ca-certificates/your.domain
+
+# Get root CA from a webserver. Could also rsync it over, etc.
+sudo wget -P /usr/local/share/ca-certificates/your.domain http://www.your.domain/pki/root.crt
+# Repeat for any other/intermediate certs to trust (not usually needed)
+
+# Refresh the OS CA store
+sudo update-ca-certificates
+```
+
 # Prerequisites
+
+## Python 3 & [pip]
+
+Virtually every Linux distribution has Python 3, either pre-installed, or as a package.
+We also need [pip] to support a later dependency.
+
+```bash
+sudo apt install python3 python3-pip
+```
 
 ## [rtl_433]
 
 Some Linux distributions have this available as a package (usually `rtl-433`), but Debian 10 (buster) doesn't, so follow the instructions in [merbanan/rtl_433][rtl_433] to install it.
 
-If it is not installed to the default location (`/usr/local/bin/rtl_433`), be sure to update `config.py` with the correct path.
+If it is not installed to the default location, be sure to update `rtl_433_cmd` in `config.py` with the correct path.
 
 ## [paho-mqtt]
 
@@ -48,7 +81,6 @@ Use `pip` to install `paho-mqtt` for the current user.
 (If you are going to run the service as a different user, install `paho-mqtt` for that user instead.)
 
 ```bash
-sudo apt install python3-pip
 pip3 install paho-mqtt
 ```
 
@@ -82,4 +114,5 @@ sudo service rtl_433-to-mqtt restart
 
 [mverleun/RTL433-to-mqtt]: https://github.com/mverleun/RTL433-to-mqtt
 [paho-mqtt]: https://pypi.org/project/paho-mqtt/
+[pip]: https://pip.pypa.io/en/stable/
 [rtl_433]: https://github.com/merbanan/rtl_433
