@@ -18,7 +18,6 @@ import logging.handlers
 import argparse
 
 from config import *
-#from datetime import datetime, time, timedelta
 from datetime import datetime, timedelta
 
 LOG_LEVEL=logging.INFO  # Could be e.g. "DEBUG", "INFO", "WARNING"
@@ -104,6 +103,19 @@ mqttc.on_log = on_log
 
 # Uncomment the next line if your MQTT server requires authentication
 mqttc.username_pw_set(MQTT_USER, password=MQTT_PASS)
+
+# Configure TLS
+if (MQTT_TLS):
+    logger.debug('Using MQTT with TLS')
+    if (MQTT_ROOT_CA):
+        logger.info(f"Using specific CA cert(s) for MQTT TLS: '{MQTT_ROOT_CA}'")
+        mqttc.tls_set(ca_certs=MQTT_ROOT_CA)
+    else:
+        mqttc.tls_set()
+else:
+    logger.info('Using insecure MQTT (no TLS)')
+
+# Connect to MQTT server
 connect_attempt = 0
 while connect_attempt < CONNECTION_ATTEMPTS:
     connect_attempt += 1
@@ -283,9 +295,6 @@ def main():
 
             # Look for "time" as the marker that this is a valid payload
             if "time" in line:
-                # Publish the raw JSON
-                # mqttc.publish(MQTT_TOPIC, payload=line, qos=MQTT_QOS)
-
                 # Incoming JSON looks like this:
                 # {
                 #   "time" : "2019-09-08 08:41:45",
@@ -340,7 +349,7 @@ def main():
                     logger.info("got sensor: {} - {}={}".format(sensor_id, sensor["name_out"], sensor_val))
 
                     long_sensor_name = sensor_id + sensor['short']
-                    base_topic = '/'.join([MQTT_TOPIC, sensor['component'], sensor_id])
+                    base_topic = '/'.join(['homeassistant', sensor['component'], sensor_id])
 
                     if not long_sensor_name in configured_sensors:
                         logger.info("Sending config for sensor: " + long_sensor_name)

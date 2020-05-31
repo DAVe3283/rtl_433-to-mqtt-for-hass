@@ -9,12 +9,13 @@ Only tested on Debian-based Linux, specifically vanilla Debian 10 (buster).
 To use this tool, you need to create the configuration file `config.py`:
 
 ```py
-# MQTT Credentials
-MQTT_USER='user'
-MQTT_PASS='password'
+# MQTT Configuration
+MQTT_USER="user"
+MQTT_PASS="password"
 MQTT_HOST="host.fqdn or ip"
-MQTT_PORT=1883
-MQTT_TOPIC="homeassistant"
+MQTT_TLS=False
+MQTT_PORT=1883 # 8883 for TLS
+MQTT_ROOT_CA="" # Leave blank to use system CA store, or provide the path to an internal CA or cert
 MQTT_QOS=0
 
 # When run as a service, sometimes the script will start before DNS is available
@@ -37,12 +38,11 @@ rtl_433_cmd = "/usr/local/bin/rtl_433 -F json"
 
 ## [rtl_433]
 
-This project uses [merbanan/rtl_433][rtl_433], which will need installed on your system.
-Some Linux distributions have this available as a package (usually `rtl-433`), but Debian 10 (buster) doesn't, so follow the instructions in that repo to install it.
+Some Linux distributions have this available as a package (usually `rtl-433`), but Debian 10 (buster) doesn't, so follow the instructions in [merbanan/rtl_433][rtl_433] to install it.
 
 If it is not installed to the default location (`/usr/local/bin/rtl_433`), be sure to update `config.py` with the correct path.
 
-## pip & paho-mqtt
+## [paho-mqtt]
 
 Use `pip` to install `paho-mqtt` for the current user.
 (If you are going to run the service as a different user, install `paho-mqtt` for that user instead.)
@@ -81,4 +81,5 @@ sudo service rtl_433-to-mqtt restart
 ```
 
 [mverleun/RTL433-to-mqtt]: https://github.com/mverleun/RTL433-to-mqtt
+[paho-mqtt]: https://pypi.org/project/paho-mqtt/
 [rtl_433]: https://github.com/merbanan/rtl_433
