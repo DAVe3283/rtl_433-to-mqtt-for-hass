@@ -207,7 +207,7 @@ messages = {
                 "component": "sensor",
                 "config": {
                     "icon": "mdi:compass",
-                    "unit_of_measurement": "deg",
+                    "unit_of_measurement": "°",
                     "expire_after": UPDATE_EXPIRATION,
                 }
             },
@@ -219,7 +219,7 @@ messages = {
                 "component": "sensor",
                 "config": {
                     "icon": "mdi:ruler",
-                    "unit_of_measurement": "inch",
+                    "unit_of_measurement": "in",
                     "expire_after": UPDATE_EXPIRATION,
                 }
             }
