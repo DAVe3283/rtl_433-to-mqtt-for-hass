@@ -343,21 +343,22 @@ def main():
 
                 for sensor in message:
                     if not sensor['name_in'] in json_dict:
-                        logger.warn('Could not find sensor "{}" in message'.format(sensor['name_in']))
+                        logger.warn(f'Could not find sensor "{sensor['name_in']}" in messages[]')
                         continue
                     sensor_val = sensor['process'](json_dict[sensor['name_in']])
-                    logger.info("got sensor: {} - {}={}".format(sensor_id, sensor["name_out"], sensor_val))
+                    logger.info(f"got sensor: {sensor_id} - {sensor["name_out"]}={sensor_val}")
 
                     long_sensor_name = sensor_id + sensor['short']
                     base_topic = '/'.join(['homeassistant', sensor['component'], sensor_id])
+                    state_topic = base_topic + '/state'
 
                     if not long_sensor_name in configured_sensors:
-                        logger.info("Sending config for sensor: " + long_sensor_name)
+                        logger.info(f"Sending config for sensor {long_sensor_name}")
                         # Log the long name so we know its already configured
                         config_topic = base_topic + "/" + sensor['short'] + "/config"
                         config_value = {
                             'name': sensor['pretty'],
-                            'state_topic': base_topic + "/state",
+                            'state_topic': state_topic,
                             'value_template': "{{{{ value_json.{} }}}}".format(sensor['name_out']),
                             'unique_id': long_sensor_name
                         }
@@ -365,26 +366,26 @@ def main():
 
                         # Send the config message
                         mqttc.publish(config_topic, payload=json.dumps(config_value), qos=MQTT_QOS)
+                        last_config = datetime.now()
 
                         # Note that we have configured this already
                         configured_sensors.append(long_sensor_name)
 
                     # Update the outbound message list with this sensor
-                    state_topic = base_topic + '/state'
                     state_value = {}
                     if state_topic in outbound_messages:
                         state_value = outbound_messages[state_topic]
                     state_value.update( { sensor['name_out']: sensor_val } )
                     outbound_messages.update({state_topic: state_value})
 
-                for topic, value in outbound_messages.items():
-                    # Send sensor update
-                    mqttc.publish(topic, payload=json.dumps(value), qos=MQTT_QOS)
+        for topic, value in outbound_messages.items():
+            # Send sensor update
+            mqttc.publish(topic, payload=json.dumps(value), qos=MQTT_QOS)
 
-                # Check if its time to redo the config
-                config_delay = datetime.now() - last_config
-                if config_delay > timedelta(minutes=RECONFIG_INTERVAL):
-                    configured_sensors = []
+        # Check if its time to redo the config
+        config_delay = datetime.now() - last_config
+        if config_delay > timedelta(minutes=RECONFIG_INTERVAL):
+            configured_sensors = []
 
 if __name__ == '__main__':
     try:
