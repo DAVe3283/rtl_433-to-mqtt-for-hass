@@ -135,10 +135,10 @@ rtl433_proc = subprocess.Popen(rtl_433_cmd.split(), stdout=subprocess.PIPE, stde
 
 # Accepted messages
 messages = {
-    0:  [ # tower sensor doesn't have a message ID
+    "Acurite-Tower": [ # tower sensor doesn't have a message ID
         {
             "short": "Bat",
-            "pretty": "Sensor Battery",
+            "pretty": "Battery",
             "name_in": "battery_ok",
             "name_out": "battery_low",
             "process": (lambda x: "OFF" if x != 0 else "ON"),
@@ -153,7 +153,6 @@ messages = {
             "pretty": "Temperature",
             "name_in": "temperature_C",
             "name_out": "temperature",
-            "process": (lambda x: x),
             "component": "sensor",
             "config": {
                 "device_class": "temperature",
@@ -163,10 +162,9 @@ messages = {
         },
         {
             "short": "Hum",
-            "pretty": "Relative Humumidity",
+            "pretty": "Humumidity",
             "name_in": "humidity",
             "name_out": "humidity",
-            "process": (lambda x: x),
             "component": "sensor",
             "config": {
                 "device_class": "humidity",
@@ -175,111 +173,116 @@ messages = {
             }
         }
     ],
-    49: [
-        {
-            "short": "Bat",
-            "pretty": "Weather Station Battery",
-            "name_in": "battery",
-            "name_out": "battery_low",
-            "process": (lambda x: "OFF" if x == "OK" else "ON"),
-            "component": "binary_sensor",
-            "config": {
-                "device_class": "battery",
+    "Acurite-5n1": {
+        49: [
+            {
+                "short": "Bat",
+                "pretty": "Battery",
+                "name_in": "battery_ok",
+                "name_out": "battery_low",
+                "process": (lambda x: "OFF" if x != 0 else "ON"),
+                "component": "binary_sensor",
+                "config": {
+                    "device_class": "battery",
+                    #"expire_after": UPDATE_EXPIRATION,
+                }
+            },
+            {
+                "short": "WndSpd",
+                "pretty": "Wind Speed",
+                "name_in": "wind_avg_km_h",
+                "name_out": "wind_speed",
+                "component": "sensor",
+                "config": {
+                    "icon": "mdi:speedometer",
+                    "unit_of_measurement": "kph",
+                    "expire_after": UPDATE_EXPIRATION,
+                }
+            },
+            {
+                "short": "WndDir",
+                "pretty": "Wind Direction",
+                "name_in": "wind_dir_deg",
+                "name_out": "wind_dir",
+                "component": "sensor",
+                "config": {
+                    "icon": "mdi:compass",
+                    "unit_of_measurement": "deg",
+                    "expire_after": UPDATE_EXPIRATION,
+                }
+            },
+            {
+                "short": "Rain",
+                "pretty": "Rainfall",
+                "name_in": "rain_in",
+                "name_out": "rain",
+                "component": "sensor",
+                "config": {
+                    "icon": "mdi:ruler",
+                    "unit_of_measurement": "inch",
+                    "expire_after": UPDATE_EXPIRATION,
+                }
             }
-        },
-        {
-            "short": "WndSpd",
-            "pretty": "Wind Speed",
-            "name_in": "wind_speed_kph",
-            "name_out": "wind_speed",
-            "process": (lambda x: round(float(x)*0.621371, 1)),  # convert kph to mph
-            "component": "sensor",
-            "config": {
-                "icon": "mdi:speedometer",
-                "unit_of_measurement": "mph",
-                "expire_after": UPDATE_EXPIRATION,
+        ],
+        56: [
+            {
+                "short": "Bat",
+                "pretty": "Battery",
+                "name_in": "battery_ok",
+                "name_out": "battery_low",
+                "process": (lambda x: "OFF" if x != 0 else "ON"),
+                "component": "binary_sensor",
+                "config": {
+                    "device_class": "battery",
+                    #"expire_after": UPDATE_EXPIRATION,
+                }
+            },
+            {
+                "short": "WndSpd",
+                "pretty": "Wind Speed",
+                "name_in": "wind_avg_km_h",
+                "name_out": "wind_speed",
+                "component": "sensor",
+                "config": {
+                    "icon": "mdi:speedometer",
+                    "unit_of_measurement": "kph",
+                    "expire_after": UPDATE_EXPIRATION,
+                }
+            },
+            {
+                "short": "Temp",
+                "pretty": "Temperature",
+                "name_in": "temperature_F",
+                "name_out": "temperature",
+                "component": "sensor",
+                "config": {
+                    "device_class": "temperature",
+                    "unit_of_measurement": "°F",
+                    "expire_after": UPDATE_EXPIRATION,
+                }
+            },
+            {
+                "short": "Hum",
+                "pretty": "Humumidity",
+                "name_in": "humidity",
+                "name_out": "humidity",
+                "component": "sensor",
+                "config": {
+                    "device_class": "humidity",
+                    "unit_of_measurement": "%",
+                    "expire_after": UPDATE_EXPIRATION,
+                }
             }
-        },
-        {
-            "short": "WndDir",
-            "pretty": "Wind Direction",
-            "name_in": "wind_dir_deg",
-            "name_out": "wind_dir",
-            "process": (lambda x: float(x)),
-            "component": "sensor",
-            "config": {
-                "icon": "mdi:compass",
-                "unit_of_measurement": "deg",
-                "expire_after": UPDATE_EXPIRATION,
-            }
-        },
-        {
-            "short": "Rain",
-            "pretty": "Rainfall",
-            "name_in": "rain_inch",
-            "name_out": "rain",
-            "process": (lambda x: float(x)),
-            "component": "sensor",
-            "config": {
-                "icon": "mdi:ruler",
-                "unit_of_measurement": "inch",
-                "expire_after": UPDATE_EXPIRATION,
-            }
-        }
-    ],
-    56: [
-        {
-            "short": "Bat",
-            "pretty": "Weather Station Battery",
-            "name_in": "battery",
-            "name_out": "battery_low",
-            "process": (lambda x: "OFF" if x == "OK" else "ON"),
-            "component": "binary_sensor",
-            "config": {
-                "device_class": "battery",
-            }
-        },
-        {
-            "short": "WndSpd",
-            "pretty": "Wind Speed",
-            "name_in": "wind_speed_kph",
-            "name_out": "wind_speed",
-            "process": (lambda x: round(float(x)*0.621371, 1)), # convert kph to mph
-            "component": "sensor",
-            "config": {
-                "icon": "mdi:speedometer",
-                "unit_of_measurement": "mph",
-                "expire_after": UPDATE_EXPIRATION,
-            }
-        },
-        {
-            "short": "Temp",
-            "pretty": "Temperature",
-            "name_in": "temperature_F",
-            "name_out": "temperature",
-            "process": (lambda x: float(x)),
-            "component": "sensor",
-            "config": {
-                "device_class": "temperature",
-                "unit_of_measurement": "°F",
-                "expire_after": UPDATE_EXPIRATION,
-            }
-        },
-        {
-            "short": "Hum",
-            "pretty": "Relative Humumidity",
-            "name_in": "humidity",
-            "name_out": "humidity",
-            "process": (lambda x: float(x)),
-            "component": "sensor",
-            "config": {
-                "device_class": "humidity",
-                "unit_of_measurement": "%",
-                "expire_after": UPDATE_EXPIRATION,
-            }
-        }
-    ]
+        ],
+    }
 }
+
+def generate_name(sensor_model, sensor_id, sensor_channel, sensor_pretty):
+    name = f'{sensor_model} {sensor_id}'
+    if sensor_channel:
+        name += f' Channel {sensor_channel}'
+    name += f' {sensor_pretty}'
+    return name
 
 def main():
     # All known (configured) devices
@@ -295,69 +298,67 @@ def main():
 
             # Look for "time" as the marker that this is a valid payload
             if "time" in line:
-                # Incoming JSON looks like this:
-                # {
-                #   "time" : "2019-09-08 08:41:45",
-                #   "model" : "Acurite 5n1 sensor",
-                #   "message_type" : 56,
-                #   "sensor_id" : 2006,
-                #   "channel" : "A",
-                #   "sequence_num" : 0,
-                #   "battery" : "OK",
-                #   "wind_speed_kph" : 3.483,
-                #   "temperature_F" : 59.400,
-                #   "humidity" : 90
-                # }
                 json_dict = json.loads(line)
 
                 # Build up sensor ID string
-                model = "model"
-                id = "0"
                 if "model" in json_dict:
-                    model = json_dict["model"].lower().replace(" ", "_")
-
-                if "sensor_id" in json_dict:
-                    id = json_dict['sensor_id']
-                elif "id" in json_dict:
-                    id = json_dict['id']
-
-                sensor_id = "{}_{}".format(model, id)
+                    # model = json_dict["model"].lower().replace(" ", "_")
+                    sensor_model = json_dict["model"]
+                else:
+                    logger.debug(f'Skipping message with no sensor model:\n  {line}')
+                    continue
+                if "id" in json_dict:
+                    sensor_id = json_dict["id"]
+                elif "sensor_id" in json_dict:
+                    sensor_id = json_dict["sensor_id"]
+                else:
+                    logger.debug(f'Skipping message with no sensor id:\n  {line}')
+                    continue
+                sensor_channel = json_dict.get("channel")
+                uid = '_'.join(filter(None, [str(sensor_model), str(sensor_id), str(sensor_channel)])).lower().replace(" ", "-")
 
                 # Skip unwanted devices
-                if not sensor_id in FILTER_IDS:
-                    logger.debug("Skipping message from sensor: {}".format(sensor_id))
+                if not uid in FILTER_IDS:
+                    logger.debug(f'Filtering message from sensor "{uid}" not in FILTER_IDS')
                     continue
 
-                # Get sensor info based on message type
-                message_type = ""
-                if "message_type" in json_dict:
-                    message_type = json_dict['message_type']
+                # Get sensor info based on model and/or message type
+                if not sensor_model in messages:
+                    logger.debug(f'Skipping unknown sensor model "{sensor_model}".')
+                    continue
+                if "subtype" in json_dict:
+                    message_type = json_dict["subtype"]
+                elif "message_type" in json_dict:
+                    message_type = json_dict["message_type"]
                 else:
-                    message_type=0;
+                    message_type = None
 
-                if not message_type in messages:
-                    logger.debug('Got unknown message type: {}'.format(message_type))
-                    continue
-
-                message = messages[message_type]
+                if message_type:
+                    if not message_type in messages[sensor_model]:
+                        logger.debug(f'Skipping unknown message type "{message_type}" for sensor model "{sensor_model}"')
+                        continue
+                    message = messages[sensor_model][message_type]
+                else:
+                    message = messages[sensor_model]
 
                 for sensor in message:
                     if not sensor['name_in'] in json_dict:
-                        logger.warn(f'Could not find sensor "{sensor['name_in']}" in messages[]')
+                        logger.warn(f'Could not find sensor "{sensor["name_in"]}" in JSON:\n  {line}')
                         continue
-                    sensor_val = sensor['process'](json_dict[sensor['name_in']])
-                    logger.info(f"got sensor: {sensor_id} - {sensor["name_out"]}={sensor_val}")
+                    sensor_val = json_dict[sensor['name_in']]
+                    if callable(sensor.get('process')):
+                        sensor_val = sensor['process'](sensor_val)
+                    logger.info(f'Got sensor: {uid} - {sensor["name_out"]}={sensor_val}')
 
-                    long_sensor_name = sensor_id + sensor['short']
-                    base_topic = '/'.join(['homeassistant', sensor['component'], sensor_id])
+                    long_sensor_name = uid + "_" + sensor['short']
+                    base_topic = '/'.join(['homeassistant', sensor['component'], uid])
                     state_topic = base_topic + '/state'
 
+                    # Configure the sensor
                     if not long_sensor_name in configured_sensors:
-                        logger.info(f"Sending config for sensor {long_sensor_name}")
-                        # Log the long name so we know its already configured
                         config_topic = base_topic + "/" + sensor['short'] + "/config"
                         config_value = {
-                            'name': sensor['pretty'],
+                            'name': generate_name(sensor_model, sensor_id, sensor_channel, sensor['pretty']),
                             'state_topic': state_topic,
                             'value_template': "{{{{ value_json.{} }}}}".format(sensor['name_out']),
                             'unique_id': long_sensor_name
@@ -365,6 +366,7 @@ def main():
                         config_value.update(sensor['config'])
 
                         # Send the config message
+                        logger.info(f'Sending config for sensor "{long_sensor_name}"')
                         mqttc.publish(config_topic, payload=json.dumps(config_value), qos=MQTT_QOS)
                         last_config = datetime.now()
 
@@ -378,14 +380,14 @@ def main():
                     state_value.update( { sensor['name_out']: sensor_val } )
                     outbound_messages.update({state_topic: state_value})
 
-        for topic, value in outbound_messages.items():
-            # Send sensor update
-            mqttc.publish(topic, payload=json.dumps(value), qos=MQTT_QOS)
+            for topic, value in outbound_messages.items():
+                # Send sensor update
+                mqttc.publish(topic, payload=json.dumps(value), qos=MQTT_QOS)
 
-        # Check if its time to redo the config
-        config_delay = datetime.now() - last_config
-        if config_delay > timedelta(minutes=RECONFIG_INTERVAL):
-            configured_sensors = []
+            # Check if its time to redo the config
+            config_delay = datetime.now() - last_config
+            if config_delay > timedelta(minutes=RECONFIG_INTERVAL):
+                configured_sensors = []
 
 if __name__ == '__main__':
     try:

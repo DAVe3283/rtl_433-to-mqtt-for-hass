@@ -26,13 +26,30 @@ LOG_FILENAME="/tmp/rtl2mqtt.log"
 LOG_DEBUG=True
 
 # Restrict publishing to sensors you expect/want
-FILTER_IDS=["acurite-tower_6478", "and so on"]
+FILTER_IDS = [
+    "acurite-tower_6478_a",
+    "and so on",
+]
 
 RECONFIG_INTERVAL=10 # minutes
 UPDATE_EXPIRATION=60 # seconds
 
 rtl_433_cmd = "/usr/local/bin/rtl_433 -F json"
 ```
+
+## FILTER_IDS
+
+To find values to use for `FILTER_IDS`, run the `rtl_433` executable, and watch for the data to come through on the sensor(s) you want.
+
+The ID string is `<model>_<id>_<channel>` with everything in lowercase. Leave off the last underscore and channel for sensors with no channel. For example:
+
+```
+time      : 2020-06-17 19:26:25
+model     : Acurite-Tower id        : 6478
+channel   : A            battery_ok: 1             Temperature: 19.7 C       Humidity  : 45            Integrity : CHECKSUM
+```
+
+This sensor would be enabled with the string `"acurite-tower_6478_a"`.
 
 ## MQTT with TLS
 
