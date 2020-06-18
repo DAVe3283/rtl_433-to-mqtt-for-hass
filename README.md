@@ -92,6 +92,10 @@ Some Linux distributions have this available as a package (usually `rtl-433`), b
 
 If it is not installed to the default location, be sure to update `rtl_433_cmd` in `config.py` with the correct path.
 
+Older versions of this tool had different names in the JSON output.
+Known working versions (launch launch with `-h` to view version information):
+* `rtl_433 version 20.02-61-gf82c025 branch master at 202005272108`
+
 ## [paho-mqtt]
 
 Use `pip` to install `paho-mqtt` for the current user.
