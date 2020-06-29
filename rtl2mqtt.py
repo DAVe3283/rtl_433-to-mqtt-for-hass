@@ -135,44 +135,46 @@ rtl433_proc = subprocess.Popen(rtl_433_cmd.split(), stdout=subprocess.PIPE, stde
 
 # Accepted messages
 messages = {
-    "Acurite-Tower": [ # tower sensor doesn't have a message ID
-        {
-            "short": "Bat",
-            "pretty": "Battery",
-            "name_in": "battery_ok",
-            "name_out": "battery_low",
-            "process": (lambda x: "OFF" if x != 0 else "ON"),
-            "component": "binary_sensor",
-            "config": {
-                "device_class": "battery",
-                #"expire_after": UPDATE_EXPIRATION,
+    "Acurite-Tower": {
+        None: [ # Acurite-Tower doesn't have a subtype
+            {
+                "short": "Bat",
+                "pretty": "Battery",
+                "name_in": "battery_ok",
+                "name_out": "battery_low",
+                "process": (lambda x: "OFF" if x != 0 else "ON"),
+                "component": "binary_sensor",
+                "config": {
+                    "device_class": "battery",
+                    #"expire_after": UPDATE_EXPIRATION,
+                }
+            },
+            {
+                "short": "Temp",
+                "pretty": "Temperature",
+                "name_in": "temperature_C",
+                "name_out": "temperature",
+                "component": "sensor",
+                "config": {
+                    "device_class": "temperature",
+                    "unit_of_measurement": "°C",
+                    "expire_after": UPDATE_EXPIRATION,
+                }
+            },
+            {
+                "short": "Hum",
+                "pretty": "Humumidity",
+                "name_in": "humidity",
+                "name_out": "humidity",
+                "component": "sensor",
+                "config": {
+                    "device_class": "humidity",
+                    "unit_of_measurement": "%",
+                    "expire_after": UPDATE_EXPIRATION,
+                }
             }
-        },
-        {
-            "short": "Temp",
-            "pretty": "Temperature",
-            "name_in": "temperature_C",
-            "name_out": "temperature",
-            "component": "sensor",
-            "config": {
-                "device_class": "temperature",
-                "unit_of_measurement": "°C",
-                "expire_after": UPDATE_EXPIRATION,
-            }
-        },
-        {
-            "short": "Hum",
-            "pretty": "Humumidity",
-            "name_in": "humidity",
-            "name_out": "humidity",
-            "component": "sensor",
-            "config": {
-                "device_class": "humidity",
-                "unit_of_measurement": "%",
-                "expire_after": UPDATE_EXPIRATION,
-            }
-        }
-    ],
+        ],
+    },
     "Acurite-5n1": {
         49: [
             {
@@ -333,13 +335,10 @@ def main():
                 else:
                     message_type = None
 
-                if message_type:
-                    if not message_type in messages[sensor_model]:
-                        logger.debug(f'Skipping unknown message type "{message_type}" for sensor model "{sensor_model}"')
-                        continue
-                    message = messages[sensor_model][message_type]
-                else:
-                    message = messages[sensor_model]
+                if not message_type in messages[sensor_model]:
+                    logger.debug(f'Skipping unknown message type "{message_type}" for sensor model "{sensor_model}"')
+                    continue
+                message = messages[sensor_model][message_type]
 
                 for sensor in message:
                     if not sensor['name_in'] in json_dict:
@@ -383,6 +382,7 @@ def main():
             for topic, value in outbound_messages.items():
                 # Send sensor update
                 mqttc.publish(topic, payload=json.dumps(value), qos=MQTT_QOS)
+            outbound_messages.clear()
 
             # Check if its time to redo the config
             config_delay = datetime.now() - last_config
