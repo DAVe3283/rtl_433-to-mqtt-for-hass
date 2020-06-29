@@ -184,6 +184,7 @@ messages = {
                 "name_out": "battery_low",
                 "process": (lambda x: "OFF" if x != 0 else "ON"),
                 "component": "binary_sensor",
+                "generic_topic": True,
                 "config": {
                     "device_class": "battery",
                     "expire_after": UPDATE_EXPIRATION,
@@ -195,6 +196,7 @@ messages = {
                 "name_in": "wind_avg_km_h",
                 "name_out": "wind_speed",
                 "component": "sensor",
+                "generic_topic": True,
                 "config": {
                     "icon": "mdi:speedometer",
                     "unit_of_measurement": "kph",
@@ -234,6 +236,7 @@ messages = {
                 "name_out": "battery_low",
                 "process": (lambda x: "OFF" if x != 0 else "ON"),
                 "component": "binary_sensor",
+                "generic_topic": True,
                 "config": {
                     "device_class": "battery",
                     "expire_after": UPDATE_EXPIRATION,
@@ -245,6 +248,7 @@ messages = {
                 "name_in": "wind_avg_km_h",
                 "name_out": "wind_speed",
                 "component": "sensor",
+                "generic_topic": True,
                 "config": {
                     "icon": "mdi:speedometer",
                     "unit_of_measurement": "kph",
@@ -352,6 +356,8 @@ def main():
                     long_sensor_name = uid + "_" + sensor['short']
                     base_topic = '/'.join(['homeassistant', sensor['component'], uid])
                     state_topic = base_topic + '/state'
+                    if message_type and not sensor.get("generic_topic"):
+                        state_topic += str(message_type)
 
                     # Configure the sensor
                     if not long_sensor_name in configured_sensors:
