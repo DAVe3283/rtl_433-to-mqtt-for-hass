@@ -146,7 +146,7 @@ messages = {
                 "component": "binary_sensor",
                 "config": {
                     "device_class": "battery",
-                    #"expire_after": UPDATE_EXPIRATION,
+                    "expire_after": UPDATE_EXPIRATION,
                 }
             },
             {
@@ -186,7 +186,7 @@ messages = {
                 "component": "binary_sensor",
                 "config": {
                     "device_class": "battery",
-                    #"expire_after": UPDATE_EXPIRATION,
+                    "expire_after": UPDATE_EXPIRATION,
                 }
             },
             {
@@ -236,7 +236,7 @@ messages = {
                 "component": "binary_sensor",
                 "config": {
                     "device_class": "battery",
-                    #"expire_after": UPDATE_EXPIRATION,
+                    "expire_after": UPDATE_EXPIRATION,
                 }
             },
             {
