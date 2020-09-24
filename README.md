@@ -27,8 +27,9 @@ LOG_DEBUG=True
 
 # Restrict publishing to sensors you expect/want
 FILTER_IDS = [
-    "acurite-tower_6478_a",
-    "and so on",
+    "Acurite-Tower_6478_A",
+    "LaCrosse-TX141THBv2_97_0",
+    # and so on
 ]
 
 RECONFIG_INTERVAL=10 # minutes
@@ -39,17 +40,26 @@ rtl_433_cmd = "/usr/local/bin/rtl_433 -F json"
 
 ## FILTER_IDS
 
-To find values to use for `FILTER_IDS`, run the `rtl_433` executable, and watch for the data to come through on the sensor(s) you want.
+To find values to use for `FILTER_IDS`, run `rtl_433 -F json`, and watch for the data to come through on the sensor(s) you want.
 
-The ID string is `<model>_<id>_<channel>` with everything in lowercase. Leave off the last underscore and channel for sensors with no channel. For example:
+> Using JSON avoids ambiguity with hex and decimal Sensor IDs.
+> For example, the LaCrosse-TX141THBv2 sensor is reported with a hex ID in the default format, but without a `0x` or `$` prefix.
+> Using JSON avoids that ambiguity; all un-quoted un-prefixed numbers are decimal.
 
+The ID string is `<model>_<id>_<channel>` with dashes instead of spaces, if applicable.
+Leave off the last underscore and channel for sensors with no channel (`<model>_<id>`).
+
+This sensor would be enabled with the string `"LaCrosse-TX141THBv2_97_0"`:
+```json
+{"time" : "2020-09-23 20:30:49", "model" : "LaCrosse-TX141THBv2", "id" : 97, "channel" : 0, "battery_ok" : 1, "temperature_C" : 21.100, "humidity" : 18, "test" : "No"}
+```
+
+This sensor would be `"Acurite-Tower_6478_A"`:
 ```
 time      : 2020-06-17 19:26:25
 model     : Acurite-Tower id        : 6478
 channel   : A            battery_ok: 1             Temperature: 19.7 C       Humidity  : 45            Integrity : CHECKSUM
 ```
-
-This sensor would be enabled with the string `"acurite-tower_6478_a"`.
 
 ## MQTT with TLS
 
@@ -93,8 +103,10 @@ Some Linux distributions have this available as a package (usually `rtl-433`), b
 If it is not installed to the default location, be sure to update `rtl_433_cmd` in `config.py` with the correct path.
 
 Older versions of this tool had different names in the JSON output.
-Known working versions (launch launch with `-h` to view version information):
+Known working versions (run `rtl_433 -V` to view version information):
 * `rtl_433 version 20.02-61-gf82c025 branch master at 202005272108`
+* `rtl_433 version 20.02-145-gb091ab6 branch master at 202009071341`
+* `rtl_433 version 20.02-162-g18cb771 branch master at 202009211347`
 
 ## [paho-mqtt]
 

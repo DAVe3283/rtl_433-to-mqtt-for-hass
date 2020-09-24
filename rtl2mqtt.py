@@ -280,7 +280,47 @@ messages = {
                 }
             }
         ],
-    }
+    },
+    "LaCrosse-TX141THBv2": {
+        None: [ # LaCrosse-TX141THBv2 doesn't have a subtype
+            {
+                "short": "Bat",
+                "pretty": "Battery",
+                "name_in": "battery_ok",
+                "name_out": "battery_low",
+                "process": (lambda x: "OFF" if x != 0 else "ON"),
+                "component": "binary_sensor",
+                "config": {
+                    "device_class": "battery",
+                    "expire_after": UPDATE_EXPIRATION,
+                }
+            },
+            {
+                "short": "Temp",
+                "pretty": "Temperature",
+                "name_in": "temperature_C",
+                "name_out": "temperature",
+                "component": "sensor",
+                "config": {
+                    "device_class": "temperature",
+                    "unit_of_measurement": "°C",
+                    "expire_after": UPDATE_EXPIRATION,
+                }
+            },
+            {
+                "short": "Hum",
+                "pretty": "Humumidity",
+                "name_in": "humidity",
+                "name_out": "humidity",
+                "component": "sensor",
+                "config": {
+                    "device_class": "humidity",
+                    "unit_of_measurement": "%",
+                    "expire_after": UPDATE_EXPIRATION,
+                }
+            }
+        ],
+    },
 }
 
 def generate_name(sensor_model, sensor_id, sensor_channel, sensor_pretty):
@@ -321,7 +361,7 @@ def main():
                     logger.debug(f'Skipping message with no sensor id:\n  {line}')
                     continue
                 sensor_channel = json_dict.get("channel")
-                uid = '_'.join(filter(None, [str(sensor_model), str(sensor_id), str(sensor_channel)])).lower().replace(" ", "-")
+                uid = '_'.join(filter(None, [str(sensor_model), str(sensor_id), str(sensor_channel)])).replace(" ", "-")
 
                 # Skip unwanted devices
                 if not uid in FILTER_IDS:
